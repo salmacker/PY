@@ -1,14 +1,19 @@
 #This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
 from pprint import pprint
 import requests
+from data_manager import DataManager
+from flight_search import FlightSearch
+import pandas as pd
 
-url = "https://api.sheety.co/69cf9c6d8fb772f1596f52f492476bbb/flightDeals/prices"
-response = requests.get(url)
+data_manager = DataManager()
+destinations = data_manager.read_IATA()
+flight_search = FlightSearch()
 
+# Iterate over the 'Name' column
+for index, row in destinations.iterrows():
+    if pd.isna(row['iataCode']):
+        city = row['City']
+        IATA = flight_search.getIata(city)
+        destinations.at[index, 'iataCode'] = IATA
 
-if response.status_code == 200:
-   data = response.json()
-   # Do something with the data
-   pprint(data)
-else:
-   pprint(f"Failed to fetch data: {response.status_code}")
+data_manager.write_IATA(destinations)
