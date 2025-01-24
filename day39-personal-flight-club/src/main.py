@@ -13,7 +13,7 @@ flight_search = FlightSearch()
 for index, row in destinations.iterrows():
     if pd.isna(row['iataCode']):
         city = row['City']
-        IATA = flight_search.getIata(city)
+        IATA = flight_search.findIata(city)
         destinations.at[index, 'iataCode'] = IATA
 
 data_manager.write_IATA(destinations)
